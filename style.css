@@ -109,10 +109,22 @@ body{
 
 .icon {
     color: #ff69b4;
-    font-size: 30px;       /* adjusted size */
+    font-size: 100%;       /* adjusted size */
     line-height: 1;
 }
 
 .text {
     font-size: 16px;
+}
+.pink-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color:#FF6B6B;
+}
+.blue-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-color:#83C7FF;
 }
