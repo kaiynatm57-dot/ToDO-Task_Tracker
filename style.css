@@ -33,12 +33,14 @@ body{
     gap: 12px;
     width: min(360px, 100%);
     margin: 0;
+    cursor: pointer;
 }
 
 .menu-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
 }
 
 
