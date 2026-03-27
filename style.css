@@ -52,13 +52,26 @@ body{
 
 .menu-icon {
     line-height: 1;
-    font-size: 20px;
-    color: #666;
-    background: none;
+    font-size: 18px;
+    color: #333;
+    background: #ffffff;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 4px;
     margin: 0;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(25,52,81,0.06);
+    box-sizing: border-box;
+}
+
+.menu-icon:focus {
+    outline: 3px solid rgba(59,130,246,0.18);
+    outline-offset: 2px;
 }
 .search-box {
   display: flex;
@@ -127,4 +140,44 @@ body{
     width: 20px;
     height: 20px;
     background-color:#83C7FF;
+}
+.tag{
+    display: inline-block;
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    padding: 4px 8px;
+    margin-right: 8px;
+    font-size: 14px;
+    color: #333;
+
+}
+
+/* Collapsed sidebar styles for menu toggle */
+#menu.collapsed {
+    width: 64px;
+    padding: 10px;
+    align-items: center;
+}
+
+#menu.collapsed .menu-title,
+#menu.collapsed .search-box,
+#menu.collapsed h5,
+#menu.collapsed .setting {
+    display: none;
+}
+
+#menu.collapsed .menu-item-icon {
+    margin: 0;
+}
+#menu.collapsed .tag,
+#menu.collapsed .menu-item span:not(.menu-item-icon) {
+    display: none;
+}
+
+#menu.collapsed .menu-item {
+    justify-content: center;
+}
+
+#menu.collapsed .menu-item .menu-item-icon {
+    margin: 0;
 }
