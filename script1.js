@@ -14,3 +14,148 @@ document.addEventListener("click", function (e) {
         menu.classList.toggle("collapsed");
     }
 });
+function loadUpcomingPage() {
+    const content = document.getElementById("contentPanel");
+
+    content.innerHTML = `
+        <div class="page-header">
+            <h2>Upcoming Tasks</h2>
+        </div>
+
+        <div class="task-input-box">
+            <input type="text" id="taskText" placeholder="Enter task...">
+            <input type="date" id="taskDate">
+
+            <!-- Category -->
+            <select id="taskCategory">
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+            </select>
+
+            <!-- List -->
+            <select id="taskList">
+                <option value="Default">Default</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Study">Study</option>
+            </select>
+
+            <button id="addTaskBtn">Add</button>
+        </div>
+
+        <div id="taskContainer"></div>
+    `;
+
+    renderUpcomingTasks();
+}
+//Handle Click (Load Page)
+document.addEventListener("click", function(e) {
+    if (e.target.closest("#upcomingMenuItem")) {
+        loadUpcomingPage();
+    }
+});
+//Store Tasks (with dates)
+let upcomingTasks = JSON.parse(localStorage.getItem("upcomingTasks")) || [];
+//Add Task with Category + List + Subtasks
+document.addEventListener("click", function(e) {
+    if (e.target.id === "addTaskBtn") {
+
+        const text = document.getElementById("taskText").value;
+        const date = document.getElementById("taskDate").value;
+        const category = document.getElementById("taskCategory").value;
+        const list = document.getElementById("taskList").value;
+
+        if (!text || !date) {
+            alert("Enter task and date");
+            return;
+        }
+
+        upcomingTasks.push({
+            text,
+            date,
+            category,
+            list,
+            subtasks: []
+        });
+
+        localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
+
+        document.getElementById("taskText").value = "";
+        renderUpcomingTasks();
+    }
+});
+
+   //Render Tasks (with category + list + subtasks)
+   function renderUpcomingTasks() {
+    const container = document.getElementById("taskContainer");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const grouped = {};
+
+    upcomingTasks.forEach((task, index) => {
+        if (!grouped[task.date]) grouped[task.date] = [];
+        grouped[task.date].push({ ...task, index });
+    });
+
+    for (let date in grouped) {
+        container.innerHTML += `
+            <div class="date-group">
+                <h3>${date}</h3>
+
+                ${grouped[date].map(task => `
+                    <div class="task">
+                        <div>
+                            <strong>${task.text}</strong><br>
+                            <small>${task.category} | ${task.list}</small>
+                        </div>
+
+                        <div>
+                            <button onclick="deleteTask(${task.index})">&#128465;</button>
+                        </div>
+                    </div>
+
+                    <!-- Subtasks -->
+                    <div class="subtask-box">
+                        <input type="text" placeholder="Add subtask..." 
+                               onkeypress="addSubtask(event, ${task.index})">
+
+                        ${task.subtasks.map((sub, i) => `
+                            <div class="subtask">
+                                ${sub}
+                                <button onclick="deleteSubtask(${task.index}, ${i})">&#128465;</button>
+                            </div>
+                        `).join("")}
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+}
+// Subtask Functions
+function addSubtask(e, taskIndex) {
+    if (e.key === "Enter") {
+        const value = e.target.value;
+
+        if (!value) return;
+
+        upcomingTasks[taskIndex].subtasks.push(value);
+
+        localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
+
+        e.target.value = "";
+        renderUpcomingTasks();
+    }
+}
+
+function deleteSubtask(taskIndex, subIndex) {
+    upcomingTasks[taskIndex].subtasks.splice(subIndex, 1);
+    localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
+    renderUpcomingTasks();
+}
+//Delete Task
+function deleteTask(index) {
+    upcomingTasks.splice(index, 1);
+    localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
+    renderUpcomingTasks();
+}
