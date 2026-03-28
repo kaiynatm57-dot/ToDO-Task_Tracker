@@ -1,0 +1,76 @@
+<!DOCTYPE html> 
+<html lang="en">
+     <head>
+         <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+          <title>Document</title> 
+          <link rel="stylesheet" href="style.css">
+         </head> 
+         <body>
+             <div class="container"> 
+                <div id="menu"> 
+                    <div class="menu-header"> 
+                        <span class="menu-title">Menu</span> 
+                        <button class="menu-icon menu-item-icon" aria-label="Open menu">&#9776;</button> 
+                    </div>
+                     <div class="search-box"> 
+                    <input type="text" placeholder="Q Search..."> 
+                </div> 
+                <h3>Tasks</h3> <div class="menu-item"> 
+                <span class="menu-item-icon" style="font-weight: bold; color: black; font-size: 22px;">&#8250;&#8250;</span>
+                <button id="btn">Upcomings</button>
+             </div> 
+             <div class="menu-item" data-view="today" id="todayMenuItem"> 
+                <span class="menu-item-icon">&#9776;</span> 
+                <button id="btn">Today</button> </div> 
+                <div class="menu-item"> 
+                    <span class="menu-item-icon">&#128197;&#65038;</span>
+                     <button id="btn">Calender</button> 
+                    </div> 
+                    <div class="menu-item" data-view="upcoming" id="upcomingMenuItem"> 
+                    <svg class="menu-item-icon" width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"> <path d="M3 3h12l6 6v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="#000"/> 
+                        <path d="M15 3v6h6" fill="#000" opacity="0.5"/>
+                     </svg>
+                      <button id="btn">Sticky wall</button> 
+                    </div> 
+                    <h5>LISTS</h5>
+                     <div class="menu-item"> 
+                        <span class="pink-box"></span>
+                         <button id="btn">Personal</button> 
+                        </div>
+                         <div class="menu-item">
+                             <span class="blue-box"></span>
+                              <button id="btn">Work</button> 
+                            </div>
+                             <div class="menu-item"> 
+                                <span style="color: black;">&#43;</span>
+                                 <button id="btn">Add List</button>
+                                 </div>
+                                  <div>
+                                     <h5>TAGS</h5>
+                                     </div> 
+                                     <div> 
+                                        <button class="tag1">Tag1</button> 
+                                        <button class="tag2">Tag2</button> 
+                                        <button class="tag">&#43; Add Tag </button> 
+                                    </div>
+                                     <div> 
+                                        <span class="menu-item-icon" >&#9881;</span> 
+                                        <button id="btn">Settings</button>
+                                     </div>
+                                      <div class="menu-item"> 
+                                        <span class="menu-item-icon" style="color: black; font-size: 18px;">&#x21AA;</span> 
+                                        <button id="btn">Sign Out</button> 
+                                    </div>
+                                 </div> 
+                                 <div class="content"> <!-- Dynamic content panel --> 
+                                    <div id="contentPanel">
+
+                                    </div> 
+                                </div>
+                                
+                                </div>
+                             </div> 
+                            </body>
+ <script src="script1.js"></script>
+ </html>

@@ -164,27 +164,38 @@ body{
     background-color:#83C7FF;
     color: #fff;
 }
-/* Collapsed sidebar styles for menu toggle */
+/* Sidebar collapsed */
 #menu.collapsed {
     width: 80px;
     min-width: 80px;
     padding: 10px;
     align-items: center;
+    transition: 0.3s;
 }
 
+/* Hide text elements */
 #menu.collapsed .menu-title,
 #menu.collapsed .search-box,
+#menu.collapsed h3,
 #menu.collapsed h5,
-#menu.collapsed .setting,
-#menu.collapsed .tag,
-#menu.collapsed .menu-item span:not(.menu-item-icon) {
+#menu.collapsed button,
+#menu.collapsed .tag1,
+#menu.collapsed .tag2,
+#menu.collapsed .tag {
     display: none;
 }
 
+/* Keep icons centered */
 #menu.collapsed .menu-item {
+    display: flex;
     justify-content: center;
+    align-items: center;
 }
 
+/* Optional: center single icons (like settings/signout) */
+#menu.collapsed > div {
+    text-align: center;
+}
 
 #content {
     flex: 1;            /* takes remaining space */
