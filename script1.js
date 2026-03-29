@@ -69,13 +69,15 @@ document.addEventListener("click", function(e) {
             return;
         }
 
-        upcomingTasks.push({
-            text,
-            date,
-            category,
-            list,
-            subtasks: []
-        });
+       upcomingTasks.push({
+        text,
+        date,
+       category,
+        list,
+       subtasks: [],
+       status: "pending",
+       completedAt: null
+});
 
         localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
 
@@ -158,4 +160,84 @@ function deleteTask(index) {
     upcomingTasks.splice(index, 1);
     localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
     renderUpcomingTasks();
+}
+//Load Today Page UI
+function loadTodayPage() {
+    const content = document.getElementById("contentPanel");
+
+    content.innerHTML = `
+        <div class="page-header">
+            <h2>Today</h2>
+        </div>
+
+        <div class="today-layout">
+            <div class="today-main">
+                <!-- main area left (can show calendar or other content) -->
+            </div>
+
+            <aside class="today-side">
+                <div class="today-card">
+                    <h3>Today Tasks</h3>
+                    <div id="todayTaskContainer"></div>
+                </div>
+            </aside>
+        </div>
+    `;
+
+    renderTodayTasks();
+}
+//Click Event
+document.addEventListener("click", function(e) {
+    if (e.target.closest("#todayMenuItem")) {
+        loadTodayPage();
+    }
+});
+//Render Today Tasks
+function renderTodayTasks() {
+    const container = document.getElementById("todayTaskContainer");
+    if (!container) return;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    const todayTasks = upcomingTasks.filter(task => task.date === today);
+
+    if (todayTasks.length === 0) {
+        container.innerHTML = `<p class="empty-message">No tasks for today</p>`;
+        return;
+    }
+
+    container.innerHTML = "";
+
+    todayTasks.forEach((task, index) => {
+        container.innerHTML += `
+            <div class="today-task ${task.status === "done" ? "completed" : ""}">
+                <div class="task-left">
+                    <input type="checkbox" 
+                        ${task.status === "done" ? "checked" : ""} 
+                        onchange="toggleStatus(${index})">
+
+                    <div>
+                        <strong>${task.text}</strong>
+                        <div class="task-meta">${task.category} | ${task.list} • Status: ${task.status}</div>
+                    </div>
+                </div>
+
+                <button onclick="deleteTask(${index})">&#128465;</button>
+            </div>
+            ${task.subtasks.length ? `<div class="subtask-box">${task.subtasks.map(sub => `<div class="subtask">${sub}</div>`).join("")}</div>` : ""}
+        `;
+    });
+}
+//Toggle Status (Done / Pending)
+function toggleStatus(index) {
+    if (upcomingTasks[index].status === "pending") {
+        upcomingTasks[index].status = "done";
+        upcomingTasks[index].completedAt = new Date().toLocaleString();
+    } else {
+        upcomingTasks[index].status = "pending";
+        upcomingTasks[index].completedAt = null;
+    }
+
+    localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
+    renderTodayTasks();
 }

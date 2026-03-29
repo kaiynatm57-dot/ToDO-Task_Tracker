@@ -19,6 +19,7 @@ body{
     border-radius: 18px;
     box-shadow: 0 12px 30px rgba(25, 52, 81, 0.12);
     overflow: hidden; /* prevents breaking */
+    padding: 18px; /* spacing inside main white container */
 }
 #menu {
     width: 260px;
@@ -29,7 +30,7 @@ body{
     padding: 12px;
     display: flex;
     flex-direction: column;
-    margin: 20px;
+    margin: 0; /* let container padding provide spacing */
     border-radius: 12px;
     gap: 12px;
     overflow-y: auto;
@@ -305,6 +306,7 @@ html, body {
 }
 
 #taskDate {
+    
     width: 150px;
 }
 
@@ -403,4 +405,116 @@ html, body {
     padding: 5px 8px;
     margin-top: 5px;
     border-radius: 5px;
+}
+/*CSS for Today Page*/
+/* Task Layout */
+.task-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Completed Task */
+.task.completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
+
+/* Checkbox */
+.task input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+/* correct */
+#contentPanel {
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+    overflow: auto;
+}
+
+/* Today layout: two-column inside contentPanel */
+.today-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.today-main {
+    flex: 1;
+    min-height: 300px;
+}
+
+.today-side {
+    width: 340px; /* narrow Today card column */
+}
+
+.today-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 6px 18px rgba(25,52,81,0.06);
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.today-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+}
+
+.today-task {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background: #fafafa;
+    margin-bottom: 10px;
+    border: 1px solid rgba(0,0,0,0.03);
+}
+
+.today-task .task-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex: 1;
+}
+
+.today-task small {
+    color: #666;
+    display: block;
+}
+
+.task-meta {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.today-task button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #c33;
+    font-size: 16px;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 800px) {
+    .today-layout { flex-direction: column; }
+    .today-side { width: 100%; }
+}
+/* container already declared above */
+#todayTaskContainer {
+    width: 100%;
+    max-width: 1000px;   /* increase if needed */
+    margin: 0 auto;      /* center it */
+}
+.task {
+    width: 100%;
+}
+.task-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
