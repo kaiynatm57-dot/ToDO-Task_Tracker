@@ -518,3 +518,42 @@ html, body {
     gap: 10px;
     align-items: center;
 }
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.day {
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.day:hover {
+    background: #83C7FF;
+    color: white;
+}
+
+/* Dot for tasks */
+.dot {
+    width: 6px;
+    height: 6px;
+    background: red;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}

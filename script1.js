@@ -241,3 +241,94 @@ function toggleStatus(index) {
     localStorage.setItem("upcomingTasks", JSON.stringify(upcomingTasks));
     renderTodayTasks();
 }
+//calendar page  
+document.addEventListener("click", function(e) {
+    if (e.target.closest("#calendarMenuItem")) {
+        loadCalendarPage();
+    }
+});
+//Create Calendar UI
+let currentDate = new Date();
+
+function loadCalendarPage() {
+    const content = document.getElementById("contentPanel");
+
+    content.innerHTML = `
+        <div class="calendar-header">
+            <button id="prevMonth">◀</button>
+            <h2 id="monthYear"></h2>
+            <button id="nextMonth">▶</button>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid"></div>
+    `;
+
+    renderCalendar();
+}
+//Render Calendar
+function renderCalendar() {
+    const grid = document.getElementById("calendarGrid");
+    const monthYear = document.getElementById("monthYear");
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+
+    monthYear.innerText = currentDate.toLocaleString("default", {
+        month: "long",
+        year: "numeric"
+    });
+
+    grid.innerHTML = "";
+
+    // Empty spaces before first day
+    for (let i = 0; i < firstDay; i++) {
+        grid.innerHTML += `<div></div>`;
+    }
+
+    // Days
+    for (let day = 1; day <= totalDays; day++) {
+        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+
+        // Check if task exists
+        const hasTask = upcomingTasks.some(t => t.date === dateStr);
+
+        grid.innerHTML += `
+            <div class="day" onclick="showTasksByDate('${dateStr}')">
+                ${day}
+                ${hasTask ? '<div class="dot"></div>' : ''}
+            </div>
+        `;
+    }
+}
+//Month Navigation
+document.addEventListener("click", function(e) {
+    if (e.target.id === "prevMonth") {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        renderCalendar();
+    }
+
+    if (e.target.id === "nextMonth") {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        renderCalendar();
+    }
+});
+//Show Tasks on Date Click
+function showTasksByDate(date) {
+    const content = document.getElementById("contentPanel");
+
+    const tasks = upcomingTasks.filter(t => t.date === date);
+
+    content.innerHTML = `
+        <h2>Tasks on ${date}</h2>
+        ${tasks.length === 0 ? "<p>No tasks</p>" : ""}
+        ${tasks.map(t => `
+            <div class="task">
+                <strong>${t.text}</strong><br>
+                <small>${t.category} | ${t.list}</small>
+            </div>
+        `).join("")}
+    `;
+}
