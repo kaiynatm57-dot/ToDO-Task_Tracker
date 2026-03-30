@@ -557,3 +557,92 @@ html, body {
     left: 50%;
     transform: translateX(-50%);
 }
+#stickyWall {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+}
+
+.note {
+    width: 200px;
+    min-height: 200px;
+    background:linear-gradient(160deg, #dce7dd 0%, #edf6f0 35%, #ffffff 100%);
+    padding: 14px;
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(25,52,81,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.note textarea {
+    width: 100%;
+    flex: 1 1 auto;
+    border: none;
+    background: transparent;
+    resize: none;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #222;
+    padding: 4px 2px;
+}
+
+.note-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* delete button styling inside footer */
+.note-footer button {
+    background: rgba(255,255,255,0.9);
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    font-size: 14px;
+}
+
+/* make category appear subtle and bottom-left */
+.note-footer span {
+    opacity: 0.95;
+}
+
+/* Drag-and-drop visuals */
+.note[draggable="true"] { cursor: move; }
+.note.drag-over { outline: 2px dashed rgba(0,0,0,0.25); transform: scale(1.02); transition: transform 0.08s ease; }
+#addNoteBtn{
+    background-color:#83C7FF ;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+/*Make contentPanel scrollable*/
+#contentPanel {
+    flex: 1;
+    height: 100%;
+    overflow-y: auto;   /* enables vertical scroll */
+    padding: 20px;
+}
+/* Optional: hide scrollbar but still scrollable */
+#taskContainer {
+    max-height: 60vh;   /* adjust as needed */
+    overflow-y: auto;   /* scroll inside tasks */
+}
+.container {
+    display: flex;
+    height: 90vh;
+}

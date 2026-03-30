@@ -32,12 +32,8 @@ function loadUpcomingPage() {
                 <option value="Work">Work</option>
             </select>
 
-            <!-- List -->
-            <select id="taskList">
-                <option value="Default">Default</option>
-                <option value="Shopping">Shopping</option>
-                <option value="Study">Study</option>
-            </select>
+            <!-- List (optional) -->
+            <input type="text" id="taskList" placeholder="List (optional)">
 
             <button id="addTaskBtn">Add</button>
         </div>
@@ -255,9 +251,9 @@ function loadCalendarPage() {
 
     content.innerHTML = `
         <div class="calendar-header">
-            <button id="prevMonth">◀</button>
+            <button id="prevMonth">&#9664;</button>
             <h2 id="monthYear"></h2>
-            <button id="nextMonth">▶</button>
+            <button id="nextMonth">&#9654;</button>
         </div>
 
         <div class="calendar-grid" id="calendarGrid"></div>
@@ -331,4 +327,116 @@ function showTasksByDate(date) {
             </div>
         `).join("")}
     `;
+}
+//sticky walls
+function loadStickyWall() {
+    const content = document.getElementById("contentPanel");
+
+    content.innerHTML = `
+        <div class="sticky-header">
+            <h2> Sticky Wall</h2>
+            <button id="addNoteBtn">+ Add Note</button>
+        </div>
+
+        <div id="stickyWall"></div>
+    `;
+    renderNotes();
+    setupStickyDrag();
+}
+//sticky wall on click
+document.addEventListener("click", function(e) {
+    if (e.target.closest("#stickyWallMenuItem")) {
+        loadStickyWall();
+    }
+});
+//render function for sticky wall
+let notes = JSON.parse(localStorage.getItem("notes")) || [];
+
+function renderNotes() {
+    const wall = document.getElementById("stickyWall");
+
+    if (!wall) return;
+
+    wall.innerHTML = "";
+
+    notes.forEach((note, index) => {
+        wall.innerHTML += `
+            <div class="note" draggable="true" data-index="${index}">
+                <textarea onchange="updateNote(${index}, this.value)">${note.text || ""}</textarea>
+
+                <div class="note-footer">
+                    <span>${note.category}</span>
+                    <button onclick="deleteNote(${index})">&#128465;</button>
+                </div>
+            </div>
+        `;
+    });
+}
+// Drag-and-drop reordering for sticky notes
+let dragSrcIndex = null;
+function setupStickyDrag() {
+    const wall = document.getElementById('stickyWall');
+    if (!wall) return;
+
+    wall.addEventListener('dragstart', (e) => {
+        const note = e.target.closest('.note');
+        if (!note) return;
+        dragSrcIndex = Number(note.dataset.index);
+        e.dataTransfer.setData('text/plain', '');
+        e.dataTransfer.effectAllowed = 'move';
+    });
+
+    wall.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        const note = e.target.closest('.note');
+        if (!note) return;
+        note.classList.add('drag-over');
+    });
+
+    wall.addEventListener('dragleave', (e) => {
+        const note = e.target.closest('.note');
+        if (!note) return;
+        note.classList.remove('drag-over');
+    });
+
+    wall.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const note = e.target.closest('.note');
+        if (!note) return;
+        note.classList.remove('drag-over');
+
+        const destIndex = Number(note.dataset.index);
+        if (dragSrcIndex === null || destIndex === dragSrcIndex) return;
+
+        const [moved] = notes.splice(dragSrcIndex, 1);
+        notes.splice(destIndex, 0, moved);
+
+        localStorage.setItem('notes', JSON.stringify(notes));
+        renderNotes();
+        dragSrcIndex = null;
+    });
+}
+//Add new note
+document.addEventListener("click", function(e) {
+    if (e.target.id === "addNoteBtn") {
+
+        notes.push({
+            text: "",
+            category: "Personal"
+        });
+
+        localStorage.setItem("notes", JSON.stringify(notes));
+        renderNotes();
+    }
+});
+//Update & Delete
+function updateNote(index, value) {
+    notes[index].text = value;
+    localStorage.setItem("notes", JSON.stringify(notes));
+}
+
+function deleteNote(index) {
+    notes.splice(index, 1);
+    localStorage.setItem("notes", JSON.stringify(notes));
+    renderNotes();
 }
