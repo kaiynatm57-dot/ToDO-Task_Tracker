@@ -195,7 +195,10 @@ function renderTodayTasks() {
 
     const today = new Date().toISOString().split("T")[0];
 
-    const todayTasks = upcomingTasks.filter(task => task.date === today);
+    // Keep original indexes so actions map back to upcomingTasks correctly
+    const todayTasks = upcomingTasks
+        .map((task, i) => ({ ...task, originalIndex: i }))
+        .filter(task => task.date === today);
 
     if (todayTasks.length === 0) {
         container.innerHTML = `<p class="empty-message">No tasks for today</p>`;
@@ -204,13 +207,13 @@ function renderTodayTasks() {
 
     container.innerHTML = "";
 
-    todayTasks.forEach((task, index) => {
+    todayTasks.forEach((task) => {
         container.innerHTML += `
             <div class="today-task ${task.status === "done" ? "completed" : ""}">
                 <div class="task-left">
                     <input type="checkbox" 
                         ${task.status === "done" ? "checked" : ""} 
-                        onchange="toggleStatus(${index})">
+                        onchange="toggleStatus(${task.originalIndex})">
 
                     <div>
                         <strong>${task.text}</strong>
@@ -218,7 +221,7 @@ function renderTodayTasks() {
                     </div>
                 </div>
 
-                <button onclick="deleteTask(${index})">&#128465;</button>
+                <button onclick="deleteTask(${task.originalIndex})">&#128465;</button>
             </div>
             ${task.subtasks.length ? `<div class="subtask-box">${task.subtasks.map(sub => `<div class="subtask">${sub}</div>`).join("")}</div>` : ""}
         `;
@@ -440,3 +443,112 @@ function deleteNote(index) {
     localStorage.setItem("notes", JSON.stringify(notes));
     renderNotes();
 }
+// Load List Tasks Page
+function loadListTasks(listName) {
+    const content = document.getElementById("contentPanel");
+
+    content.innerHTML = `
+        <div class="page-header">
+            <h2>${listName} Tasks</h2>
+        </div>
+        <div id="listTaskContainer"></div>
+    `;
+
+    renderListTasks(listName);
+}
+
+// Render Tasks
+function renderListTasks(listName) {
+    const container = document.getElementById("listTaskContainer");
+
+    const filtered = upcomingTasks
+        .map((task, i) => ({ ...task, originalIndex: i }))
+        .filter(task => task.list === listName || task.category === listName);
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<p class="empty-message">No tasks in ${listName}</p>`;
+        return;
+    }
+
+    container.innerHTML = "";
+
+    filtered.forEach(task => {
+        container.innerHTML += `
+            <div class="task">
+                <div>
+                    <strong>${task.text}</strong><br>
+                    <small>${task.category} | ${task.date}</small>
+                </div>
+
+                <button onclick="deleteTask(${task.originalIndex})">&#128465;</button>
+            </div>
+        `;
+    });
+}
+
+// Sidebar list wiring and Add List behavior
+document.addEventListener("click", function(e) {
+    if (e.target.closest("#personalList")) {
+        loadListTasks('Personal');
+    }
+
+    if (e.target.closest("#workList")) {
+        loadListTasks('Work');
+    }
+
+    if (e.target.closest("#addListBtn")) {
+        const box = document.getElementById('listInputBox');
+        if (!box) return;
+        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        const input = document.getElementById('newListInput');
+        if (box.style.display === 'block' && input) input.focus();
+    }
+});
+
+// Custom lists persistence
+let customLists = JSON.parse(localStorage.getItem('customLists')) || [];
+
+function renderCustomLists() {
+    const container = document.getElementById('listsContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    customLists.forEach((name) => {
+        const safe = name.replace(/"/g, '&quot;');
+        container.innerHTML += `
+            <div class="menu-item custom-list" data-list="${safe}">
+                <span class="list-dot"></span>
+                <button class="menu-btn">${name}</button>
+            </div>
+        `;
+    });
+}
+
+// Delegate clicks for custom lists
+document.addEventListener('click', function(e) {
+    const listEl = e.target.closest('.custom-list');
+    if (listEl) {
+        const name = listEl.dataset.list;
+        loadListTasks(name);
+    }
+});
+
+// Create new list from input (Enter)
+document.addEventListener('keypress', function(e) {
+    if (e.target && e.target.id === 'newListInput' && e.key === 'Enter') {
+        const name = e.target.value.trim();
+        if (!name) return;
+        if (!customLists.includes(name)) {
+            customLists.push(name);
+            localStorage.setItem('customLists', JSON.stringify(customLists));
+            renderCustomLists();
+        }
+        e.target.value = '';
+        const box = document.getElementById('listInputBox');
+        if (box) box.style.display = 'none';
+    }
+});
+
+// Render persisted custom lists on startup
+renderCustomLists();

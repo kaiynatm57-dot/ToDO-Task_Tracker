@@ -36,20 +36,29 @@
 
     <h5>LISTS</h5>
 
-    <div class="menu-item">
+    <div class="menu-item" id="personalList">
         <span class="pink-box"></span>
         <button id="menu-btn">Personal</button>
     </div>
 
-    <div class="menu-item">
+    <div class="menu-item" id="workList">
         <span class="blue-box"></span>
         <button id="menu-btn">Work</button>
     </div>
 
-    <div class="menu-item">
+    <div class="menu-item" id="addListBtn">
         <span style="color: black;">&#43;</span>
         <button id="menu-btn">Add List</button>
     </div>
+    <!-- Hidden input -->
+<div id="listInputBox" style="display:none; margin-left:10px;">
+    <input type="text" id="newListInput" placeholder="Enter list name">
+</div>
+
+<!-- Container where lists will appear -->
+<div id="listsContainer">
+
+</div>
 
     <h5>TAGS</h5>
     <div>
