@@ -6,8 +6,10 @@
     </div>
 
     <div class="search-box">
-        <input type="text" placeholder="Q Search...">
+        <input id="sidebarSearch" type="text" placeholder="Q Search...">
     </div>
+
+    <div id="searchNoResults" class="empty-message" style="display:none; margin-left:6px;">No results</div>
 
     <h3>Tasks</h3>
 
@@ -50,18 +52,18 @@
         <span style="color: black;">&#43;</span>
         <button id="menu-btn">Add List</button>
     </div>
-    <!-- Hidden input -->
-<div id="listInputBox" style="display:none; margin-left:10px;">
+    <!-- Hidden input and lists (dropdown) -->
+<div id="listInputBox" style="margin-left:10px; display:none;">
     <input type="text" id="newListInput" placeholder="Enter list name">
 </div>
 
 <!-- Container where lists will appear -->
-<div id="listsContainer">
+<div id="listsContainer" style="display:none;">
 
 </div>
 
     <h5>TAGS</h5>
-    <div>
+    <div id="tagsRow">
         <button class="tag1">Tag1</button>
         <button class="tag2">Tag2</button>
         <button class="tag">&#43; Add Tag</button>

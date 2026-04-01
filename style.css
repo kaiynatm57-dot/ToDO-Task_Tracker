@@ -179,11 +179,17 @@ body{
 #menu.collapsed .search-box,
 #menu.collapsed h3,
 #menu.collapsed h5,
-#menu.collapsed button,
+#menu.collapsed button:not(.menu-icon),
 #menu.collapsed .tag1,
 #menu.collapsed .tag2,
 #menu.collapsed .tag {
     display: none;
+}
+
+/* Ensure the collapse/expand icon stays visible when sidebar is collapsed */
+#menu.collapsed .menu-icon {
+    display: inline-flex; /* override the general button hide rule */
+    margin: 6px auto;     /* center icon in collapsed sidebar */
 }
 
 /* Keep icons centered */
@@ -377,6 +383,9 @@ html, body {
     text-align: center;
     color: #888;
     margin-top: 20px;
+    white-space: normal; /* allow wrapping so full list names show */
+    overflow-wrap: anywhere; /* break long words if needed */
+    word-break: break-word;
 }
 /* Dropdowns */
 .task-input-box select {
@@ -645,4 +654,97 @@ html, body {
 .container {
     display: flex;
     height: 90vh;
+}
+
+/* Custom lists container and items */
+#listsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 6px;
+    margin-top: 6px;
+}
+
+/* When the Add List dropdown is open, hide tags row to avoid visual overlap */
+#menu.lists-open #tagsRow {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+/* start hidden - will appear as dropdown under Add List */
+#listsContainer[style] {
+    /* preserve inline-style display:none when set by HTML/JS */
+}
+
+.custom-list {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.08s ease;
+    background: transparent;
+}
+
+.custom-list .list-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: #e9e9e9;
+    display: inline-block;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.custom-list .menu-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+}
+
+.custom-list:hover {
+    background: #f3f8ff;
+    transform: translateY(-1px);
+}
+
+/* Make small persisted lists appear as compact stacked items */
+#listsContainer .custom-list .menu-btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px; /* keep sidebar tidy */
+}
+
+/* Actions shown to the right of each custom list */
+.list-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+}
+
+.list-actions button {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.list-actions button:hover {
+    background: rgba(0,0,0,0.04);
+}
+
+.list-view-btn {
+    color: #0b69ff;
+}
+
+.list-delete-btn {
+    color: #c33;
 }

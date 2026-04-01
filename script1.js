@@ -451,6 +451,20 @@ function loadListTasks(listName) {
         <div class="page-header">
             <h2>${listName} Tasks</h2>
         </div>
+
+        <div class="task-input-box">
+            <input type="text" id="listTaskText" placeholder="Enter task...">
+            <input type="date" id="listTaskDate">
+
+            <!-- Category -->
+            <select id="listTaskCategory">
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+            </select>
+
+            <button id="addListTaskBtn" data-list="${listName}">Add to ${listName}</button>
+        </div>
+
         <div id="listTaskContainer"></div>
     `;
 
@@ -497,16 +511,75 @@ document.addEventListener("click", function(e) {
     }
 
     if (e.target.closest("#addListBtn")) {
+        const addBtn = e.target.closest('#addListBtn');
         const box = document.getElementById('listInputBox');
-        if (!box) return;
-        box.style.display = box.style.display === 'none' ? 'block' : 'none';
+        const lists = document.getElementById('listsContainer');
+        if (!box || !lists || !addBtn) return;
+
+        const isOpen = addBtn.classList.toggle('open');
+        box.style.display = isOpen ? 'block' : 'none';
+        lists.style.display = isOpen ? 'flex' : 'none';
+
+        // Adjust sidebar layout when lists dropdown is open
+        const menuEl = document.getElementById('menu');
+        if (menuEl) menuEl.classList.toggle('lists-open', isOpen);
+
         const input = document.getElementById('newListInput');
-        if (box.style.display === 'block' && input) input.focus();
+        if (isOpen && input) input.focus();
     }
+});
+
+// Sidebar search: filter menu items and custom lists
+document.addEventListener('input', function(e) {
+    if (!e.target || e.target.id !== 'sidebarSearch') return;
+
+    const q = e.target.value.trim().toLowerCase();
+
+    const menuItems = document.querySelectorAll('#menu > .menu-item');
+    const customListItems = document.querySelectorAll('#listsContainer .custom-list');
+    let matchCount = 0;
+
+    // Show/hide main menu items (Upcoming, Today, Calendar, Sticky wall, Personal, Work, Add List, etc.)
+    menuItems.forEach(mi => {
+        // For menu-item that contains buttons, use innerText
+        const text = (mi.innerText || '').toLowerCase();
+        if (!q || text.includes(q)) {
+            mi.style.display = 'flex';
+            matchCount++;
+        } else {
+            mi.style.display = 'none';
+        }
+    });
+
+    // Ensure lists container is visible while searching so list matches show
+    const listsContainer = document.getElementById('listsContainer');
+    const addListBtn = document.getElementById('addListBtn');
+    if (listsContainer) {
+        if (q) listsContainer.style.display = 'flex';
+        else if (addListBtn && !addListBtn.classList.contains('open')) listsContainer.style.display = 'none';
+    }
+
+    // Show/hide custom lists
+    customListItems.forEach(li => {
+        const btn = li.querySelector('.menu-btn');
+        const text = (btn ? btn.innerText : li.innerText).toLowerCase();
+        if (!q || text.includes(q)) {
+            li.style.display = 'flex';
+            matchCount++;
+        } else {
+            li.style.display = 'none';
+        }
+    });
+
+    const noEl = document.getElementById('searchNoResults');
+    if (noEl) noEl.style.display = (q && matchCount === 0) ? 'block' : 'none';
 });
 
 // Custom lists persistence
 let customLists = JSON.parse(localStorage.getItem('customLists')) || [];
+if (!Array.isArray(customLists)) customLists = [];
+// Keep persisted custom lists sorted alphabetically (case-insensitive)
+customLists.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
 function renderCustomLists() {
     const container = document.getElementById('listsContainer');
@@ -517,20 +590,51 @@ function renderCustomLists() {
     customLists.forEach((name) => {
         const safe = name.replace(/"/g, '&quot;');
         container.innerHTML += `
-            <div class="menu-item custom-list" data-list="${safe}">
+            <div class="custom-list" data-list="${safe}">
                 <span class="list-dot"></span>
-                <button class="menu-btn">${name}</button>
+                <button class="menu-btn custom-list-view" data-list="${safe}">${name}</button>
+
+                <div class="list-actions">
+                    <button class="list-view-btn" data-list="${safe}" title="View">👁</button>
+                    <button class="list-delete-btn" data-list="${safe}" title="Delete">🗑</button>
+                </div>
             </div>
         `;
     });
 }
 
-// Delegate clicks for custom lists
+// Delegate clicks for custom lists: view and delete actions
 document.addEventListener('click', function(e) {
-    const listEl = e.target.closest('.custom-list');
-    if (listEl) {
-        const name = listEl.dataset.list;
+    const delBtn = e.target.closest('.list-delete-btn');
+    if (delBtn) {
+        const name = delBtn.dataset.list;
+        if (!name) return;
+        const confirmMsg = `Delete list "${name}"? This will not remove existing tasks.`;
+        if (!confirm(confirmMsg)) return;
+
+        customLists = customLists.filter(n => n !== name);
+        localStorage.setItem('customLists', JSON.stringify(customLists));
+        renderCustomLists();
+        return;
+    }
+
+    const viewBtn = e.target.closest('.list-view-btn') || e.target.closest('.custom-list-view') || e.target.closest('.custom-list .menu-btn');
+    if (viewBtn) {
+        const name = viewBtn.dataset.list || (viewBtn.closest('.custom-list') && viewBtn.closest('.custom-list').dataset.list);
+        if (!name) return;
         loadListTasks(name);
+        // close the Add List dropdown if open
+        const addBtnEl = document.getElementById('addListBtn');
+        const boxEl = document.getElementById('listInputBox');
+        const listsEl = document.getElementById('listsContainer');
+        if (addBtnEl && addBtnEl.classList.contains('open')) {
+            addBtnEl.classList.remove('open');
+            if (boxEl) boxEl.style.display = 'none';
+            if (listsEl) listsEl.style.display = 'none';
+                // remove lists-open class to restore tags spacing
+                const menuEl2 = document.getElementById('menu');
+                if (menuEl2) menuEl2.classList.remove('lists-open');
+        }
     }
 });
 
@@ -541,12 +645,57 @@ document.addEventListener('keypress', function(e) {
         if (!name) return;
         if (!customLists.includes(name)) {
             customLists.push(name);
+            // dedupe and sort alphabetically
+            customLists = Array.from(new Set(customLists));
+            customLists.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
             localStorage.setItem('customLists', JSON.stringify(customLists));
             renderCustomLists();
         }
         e.target.value = '';
         const box = document.getElementById('listInputBox');
+        const lists = document.getElementById('listsContainer');
+        const addBtn = document.getElementById('addListBtn');
         if (box) box.style.display = 'none';
+        if (lists) lists.style.display = 'none';
+        if (addBtn) addBtn.classList.remove('open');
+    }
+});
+
+// Add task directly into a custom list (from list page)
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'addListTaskBtn') {
+        const listName = e.target.dataset.list;
+        const textEl = document.getElementById('listTaskText');
+        const dateEl = document.getElementById('listTaskDate');
+        const categoryEl = document.getElementById('listTaskCategory');
+
+        if (!textEl || !dateEl) return;
+
+        const text = textEl.value.trim();
+        const date = dateEl.value;
+        const category = categoryEl ? categoryEl.value : 'Personal';
+
+        if (!text || !date) {
+            alert('Enter task and date');
+            return;
+        }
+
+        upcomingTasks.push({
+            text,
+            date,
+            category,
+            list: listName,
+            subtasks: [],
+            status: 'pending',
+            completedAt: null
+        });
+
+        localStorage.setItem('upcomingTasks', JSON.stringify(upcomingTasks));
+
+        // clear inputs and re-render
+        textEl.value = '';
+        dateEl.value = '';
+        renderListTasks(listName);
     }
 });
 
