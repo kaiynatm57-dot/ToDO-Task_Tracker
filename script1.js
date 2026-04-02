@@ -701,3 +701,64 @@ document.addEventListener('click', function(e) {
 
 // Render persisted custom lists on startup
 renderCustomLists();
+//save the tags in local storage (for future use in filtering or categorization)
+let tags = JSON.parse(localStorage.getItem("tags")) || ["Tag1", "Tag2"];
+function renderTags() {
+    const container = document.querySelector(".tags-container");
+
+    container.innerHTML = "";
+
+    tags.forEach(tag => {
+        container.innerHTML += `
+            <button class="tag" data-tag="${tag}">
+                ${tag}
+            </button>
+        `;
+    });
+
+    // Add button at end
+    container.innerHTML += `
+        <button class="tag add-tag" id="addTagBtn">+ Add Tag</button>
+    `;
+}
+//Add New Tag
+document.addEventListener("click", function(e) {
+
+    if (e.target.id === "addTagBtn") {
+        const name = prompt("Enter tag name");
+
+        if (!name) return;
+
+        tags.push(name);
+
+        localStorage.setItem("tags", JSON.stringify(tags));
+
+        renderTags();
+    }
+
+});
+//Click Tag → Filter Tasks
+document.addEventListener("click", function(e) {
+
+    if (e.target.classList.contains("tag") && !e.target.classList.contains("add-tag")) {
+        
+        const tagName = e.target.dataset.tag;
+
+        loadTagTasks(tagName);
+    }
+
+});
+//Load Tag Tasks Page
+function loadTagTasks(tagName) {
+    const content = document.getElementById("contentPanel");
+
+    content.innerHTML = `
+        <div class="page-header">
+            <h2>${tagName} Tasks</h2>
+        </div>
+
+        <div id="tagTaskContainer"></div>
+    `;
+
+    renderTagTasks(tagName);
+}
