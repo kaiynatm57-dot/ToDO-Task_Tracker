@@ -1,9 +1,45 @@
 // Load sidebar dynamically
 fetch("sidebar.html")
   .then(response => response.text())
-  .then(data => {
-    document.getElementById("sidebar-container").innerHTML = data;
-  })
+    .then(data => {
+        document.getElementById("sidebar-container").innerHTML = data;
+
+        // Render persisted custom lists now that sidebar exists
+        if (typeof renderCustomLists === 'function') renderCustomLists();
+
+        // Show Upcoming Tasks as the app landing page once sidebar is loaded
+        if (typeof loadUpcomingPage === 'function') loadUpcomingPage();
+
+        // Helper to mark a sidebar menu item active
+        function setActiveMenu(id) {
+                const menu = document.getElementById('menu');
+                if (!menu) return;
+                menu.querySelectorAll('.menu-item').forEach(mi => mi.classList.remove('active'));
+                const el = document.getElementById(id);
+                if (el) el.classList.add('active');
+        }
+
+        // Make the Tasks heading clickable to load Upcoming Tasks
+        const tasksHeader = document.getElementById('tasksHeader');
+        if (tasksHeader) {
+                tasksHeader.addEventListener('click', () => {
+                        if (typeof loadUpcomingPage === 'function') loadUpcomingPage();
+                        setActiveMenu('upcomingMenuItem');
+                });
+        }
+
+        // Global delegation to mark clicked menu-item as active
+        document.addEventListener('click', function(e) {
+                const mi = e.target.closest('#menu .menu-item');
+                if (!mi) return;
+                // ensure only one active
+                document.querySelectorAll('#menu .menu-item').forEach(n => n.classList.remove('active'));
+                mi.classList.add('active');
+        });
+
+        // Set initial active menu to Upcoming
+        setActiveMenu('upcomingMenuItem');
+    })
   .catch(error => console.error("Error loading sidebar:", error));
   
 // Sidebar Toggle
@@ -14,6 +50,22 @@ document.addEventListener("click", function (e) {
         menu.classList.toggle("collapsed");
     }
 });
+
+// Apply colored class to category selects and keep it in sync with value
+function setupCategoryStyling(selector) {
+    const sel = document.querySelector(selector);
+    if (!sel) return;
+
+    function update() {
+        sel.classList.remove('category-personal', 'category-work');
+        const v = (sel.value || (sel.options[sel.selectedIndex] && sel.options[sel.selectedIndex].value) || '').toString().toLowerCase();
+        if (v.includes('personal')) sel.classList.add('category-personal');
+        else if (v.includes('work')) sel.classList.add('category-work');
+    }
+
+    update();
+    sel.addEventListener('change', update);
+}
 function loadUpcomingPage() {
     const content = document.getElementById("contentPanel");
 
@@ -40,6 +92,9 @@ function loadUpcomingPage() {
 
         <div id="taskContainer"></div>
     `;
+
+    // initialize category styling for this dynamic form
+    setupCategoryStyling('#taskCategory');
 
     renderUpcomingTasks();
 }
@@ -458,8 +513,8 @@ function loadListTasks(listName) {
 
             <!-- Category -->
             <select id="listTaskCategory">
-                <option value="Personal">Personal</option>
-                <option value="Work">Work</option>
+                <option  value="Personal">Personal</option>
+                <option  value="Work">Work</option>
             </select>
 
             <button id="addListTaskBtn" data-list="${listName}">Add to ${listName}</button>
@@ -467,6 +522,9 @@ function loadListTasks(listName) {
 
         <div id="listTaskContainer"></div>
     `;
+
+    // initialize category styling for this dynamic form
+    setupCategoryStyling('#listTaskCategory');
 
     renderListTasks(listName);
 }

@@ -12,9 +12,11 @@ body{
 
 .container {
     display: flex;
-    width: min(1200px, 100%);
+    width: min(1800px, 100%);
     height: 90vh; /* avoid overflow on zoom */
-    margin: 0 auto;
+    /* left-align instead of centering */
+    margin: 24px 0 0 24px;
+    gap: 24px; /* spacing between sidebar and content */
     background-color: #ffffff;
     border-radius: 18px;
     box-shadow: 0 12px 30px rgba(25, 52, 81, 0.12);
@@ -24,15 +26,15 @@ body{
 #menu {
     width: 260px;
     min-width: 220px;
-    max-width: 300px;
+    max-width: 320px;
     height: 100%;
     background-color: #f8f8f8;
-    padding: 12px;
+    padding: 18px; /* more breathing room */
     display: flex;
     flex-direction: column;
     margin: 0; /* let container padding provide spacing */
     border-radius: 12px;
-    gap: 12px;
+    gap: 16px; /* increased gap between menu items */
     overflow-y: auto;
     word-wrap: break-word; /* moved here */
 }
@@ -45,6 +47,26 @@ body{
     cursor: pointer;
 }
 
+/* Clickable Tasks header in sidebar */
+#tasksHeader {
+    cursor: pointer;
+    margin-left: 6px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Active menu item styling */
+#menu .menu-item.active {
+    background: #eaf4ff;
+    border-radius: 8px;
+}
+
+#menu .menu-item.active .menu-item-icon,
+#menu .menu-item.active button {
+    color: black;
+    font-weight: 600;
+}
+
 
 .menu-title {
     font-size: 26px;
@@ -55,19 +77,19 @@ body{
 .menu-icon {
     line-height: 1;
     font-size: 18px;
-    color: #333;
+    color: #0b69ff;
     background: #ffffff;
-    border: none;
+    border: 1px solid rgba(11,105,255,0.08);
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
     margin: 0;
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(25,52,81,0.06);
+    border-radius: 10px;
+    box-shadow: 0 6px 14px rgba(11,105,255,0.04);
     box-sizing: border-box;
 }
 
@@ -110,16 +132,30 @@ body{
     cursor: pointer;
 }
 .menu-item-icon {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
     color: #333;
     cursor: pointer;
-    padding: 4px;
+    padding: 6px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.04);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
     box-sizing: border-box;
+}
+
+.menu-item-icon:hover, .menu-icon:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(11,105,255,0.06);
+}
+
+.menu-item-icon:focus, .menu-icon:focus {
+    outline: 3px solid rgba(11,105,255,0.14);
+    outline-offset: 2px;
 }
 
 
@@ -282,25 +318,36 @@ html, body {
 }
 /* Page Header */
 .page-header {
-    padding: 15px 10px;
-    border-bottom: 1px solid #ddd;
+    padding: 18px 12px;
+    border-bottom: 1px solid #eee;
+    background: transparent;
 }
 
 .page-header h2 {
-    font-size: 22px;
-    color: #333;
+    font-size: 20px;
+    color:black;
+    margin: 0 0 6px 0;
+    font-weight: 700;
+}
+
+.page-header .page-sub {
+    color: #666;
+    font-size: 13px;
+    margin-top: 2px;
 }
 
 /* Task Input Box */
 .task-input-box {
     display: flex;
-    gap: 10px;
-    padding: 15px 10px;
-    flex-wrap: wrap;
+    gap: 12px; /* balanced spacing */
+    padding: 12px; /* compact input area */
+    width: 40%;
+    align-items: center;
+    flex-wrap: nowrap;
 }
 
 .task-input-box input {
-    padding: 8px 10px;
+    padding: 10px 12px;
     border: 1px solid #ccc;
     border-radius: 6px;
     outline: none;
@@ -308,12 +355,11 @@ html, body {
 
 #taskText {
     flex: 1;
-    min-width: 200px;
+    min-width: 220px;
 }
 
 #taskDate {
-    
-    width: 150px;
+    width: 160px;
 }
 
 #addTaskBtn {
@@ -341,11 +387,12 @@ html, body {
 }
 
 .date-group h3 {
-    margin-bottom: 8px;
-    color: #555;
-    border-left: 4px solid #83C7FF;
+    margin-bottom: 12px;
+    color: #333;
+    border-left: 4px solid #0b69ff;
     border-radius: 4px;
-    padding-left: 8px;
+    padding-left: 10px;
+    font-weight: 600;
 }
 
 /* Task Item */
@@ -354,11 +401,11 @@ html, body {
     justify-content: space-between;
     align-items: center;
     background: #ffffff;
-    padding: 10px 12px;
-    margin-bottom: 8px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    transition: 0.2s;
+    border: 1px solid rgba(11,105,255,0.04);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 
 .task:hover {
@@ -368,6 +415,13 @@ html, body {
 /* Task Text */
 .task span {
     color: #333;
+}
+
+.task small {
+    display: block;
+    color: #666;
+    font-size: 12px;
+    margin-top: 6px;
 }
 
 /* Delete Button */
@@ -389,10 +443,21 @@ html, body {
 }
 /* Dropdowns */
 .task-input-box select {
-    padding: 8px;
+    padding: 8px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    background: #fff;
+    min-width: 120px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #333 50%), linear-gradient(135deg, #333 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(1em + 2px), calc(100% - 13px) calc(1em + 2px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
 }
+
+
+
 
 /* Subtask Box */
 .subtask-box {
@@ -414,6 +479,15 @@ html, body {
     padding: 5px 8px;
     margin-top: 5px;
     border-radius: 5px;
+}
+
+/* narrower scrollbar for content area */
+#contentPanel::-webkit-scrollbar {
+    width: 10px;
+}
+#contentPanel::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.12);
+    border-radius: 8px;
 }
 /*CSS for Today Page*/
 /* Task Layout */
@@ -437,7 +511,7 @@ html, body {
 /* correct */
 #contentPanel {
     flex: 1;
-    width: 100%;
+    width: 160%;
     padding: 20px;
     overflow: auto;
 }
@@ -566,20 +640,33 @@ html, body {
     left: 50%;
     transform: translateX(-50%);
 }
+.sticky-wrap {
+    /* wrapper for sticky wall to control grid sizing if needed */
+}
+
 #stickyWall {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: grid;
+    /* auto-fill columns sized between 220px and 1fr to adapt to container width */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
     padding: 20px;
+    align-items: start;
+
+    /* width control: adjust --sticky-max-width as needed */
+    width: 100%;
+    max-width: var(--sticky-max-width, 1200px);
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .note {
-    width: 200px;
-    min-height: 200px;
-    background:linear-gradient(160deg, #dce7dd 0%, #edf6f0 35%, #ffffff 100%);
+    width: 100%;
+    min-height: 180px;
+    background: linear-gradient(160deg, #dce7dd 0%, #edf6f0 35%, #ffffff 100%);
     padding: 14px;
     border-radius: 12px;
-    box-shadow: 0 8px 18px rgba(25,52,81,0.08);
+    box-shadow: 0 8px 18px rgba(25,52,81,0.06);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -612,12 +699,12 @@ html, body {
 
 /* delete button styling inside footer */
 .note-footer button {
-    background: rgba(255,255,255,0.9);
-    border: none;
-    padding: 6px;
-    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid rgba(0,0,0,0.06);
+    padding: 6px 8px;
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     font-size: 14px;
 }
 
@@ -747,4 +834,42 @@ html, body {
 
 .list-delete-btn {
     color: #c33;
+}
+#addListTaskBtn{
+    background-color:#83C7FF ;
+    color: white;
+    border: none;
+    min-width: 160px; /* allow to expand but avoid wrapping */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    white-space: nowrap; /* prevent text wrapping into multiple lines */
+}
+#addListTaskBtn:hover {
+    background-color: #83C7FFcc;
+}
+
+@media (max-width: 640px) {
+    #addListTaskBtn {
+        min-width: 120px;
+        padding: 8px 10px;
+    }
+}
+
+/* Ensure buttons inside input rows don't wrap text */
+.task-input-box button {
+    white-space: nowrap;
+}
+
+
+
+#listTaskCategory {
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+
 }
